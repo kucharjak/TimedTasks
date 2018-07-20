@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
+using SQLite;
 
 namespace TimedTasks.ViewModels
 {
@@ -12,26 +13,27 @@ namespace TimedTasks.ViewModels
         private TimeSpan startTime, endTime;
         private string summary, description;
         private bool finished;
-
         private Color backgroundColor;
 
+        [PrimaryKey, AutoIncrement]
         public int Id { set { SetProperty(ref id, value); } get { return id; } }
 
         public DateTime DueDate { set { SetProperty(ref dueDate, value); } get { return dueDate; } }
         public TimeSpan StartTime { set { SetProperty(ref startTime, value); } get { return startTime; } }
         public TimeSpan EndTime { set { SetProperty(ref endTime, value); } get { return endTime; } }
 
+        [MaxLength(50)]
         public string Summary { set { SetProperty(ref summary, value); } get { return summary; } }
+        [MaxLength(1000)]
         public string Description { set { SetProperty(ref description, value); } get { return description; } }
 
         public bool Finished { set { SetProperty(ref finished, value); } get { return finished; } }
 
+        [Ignore]
         public Color BackgroundColor { set { SetProperty(ref backgroundColor, value); } get { return backgroundColor; } }
 
         public TaskViewModel()
         {
-            var r = new Random();
-            BackgroundColor = new Color(r.NextDouble(), r.NextDouble(), r.NextDouble());
         }
 
         public TaskViewModel Copy(bool copyId)

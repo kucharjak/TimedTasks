@@ -71,6 +71,7 @@
                 <Entry x:Name="Summary" Text="{Binding Summary}"
                        Keyboard="Text"
                        BackgroundColor="LightBlue"
+                       MaxLength="50"
                        Grid.Row="4" Grid.ColumnSpan="2" />
 
                 <Label Text="Popis úkolu"
@@ -81,6 +82,7 @@
                 <Editor x:Name="Description" Text="{Binding Description}"
                         Keyboard="Text"
                         BackgroundColor="LightBlue"
+                        MaxLength="1000"
                         Grid.Row="6" Grid.ColumnSpan="2" />
 
                 <StackLayout Orientation="Horizontal"

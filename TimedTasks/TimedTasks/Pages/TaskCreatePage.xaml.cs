@@ -22,31 +22,34 @@ namespace TimedTasks.Pages
             TaskDate.Date = taskDate;
         }
 
-        //private bool ValidateValues()
-        //{
-        //    TaskStartTime.TextColor = Color.Default;
-        //    TaskEndTime.TextColor = Color.Default;
-        //    Summary.PlaceholderColor = Color.Default;
+        protected bool ValidateValues()
+        {
+            TaskStartTime.TextColor = Color.Default;
+            TaskEndTime.TextColor = Color.Default;
+            Summary.PlaceholderColor = Color.Default;
 
-        //    if (TaskStartTime.Time == TaskEndTime.Time)
-        //    {
-        //        TaskStartTime.TextColor = Color.Red;
-        //        TaskEndTime.TextColor = Color.Red;
-        //        return false;
-        //    }
+            if (TaskStartTime.Time == TaskEndTime.Time || TaskStartTime.Time > TaskEndTime.Time)
+            {
+                TaskStartTime.TextColor = Color.Red;
+                TaskEndTime.TextColor = Color.Red;
+                return false;
+            }
 
-        //    if (String.IsNullOrEmpty(Summary.Text))
-        //    {
-        //        Summary.Placeholder = "Napiš název úkolu";
-        //        Summary.PlaceholderColor = Color.Red;
-        //        return false;
-        //    }
+            if (String.IsNullOrEmpty(Summary.Text))
+            {
+                Summary.Placeholder = "Napiš název úkolu";
+                Summary.PlaceholderColor = Color.Red;
+                return false;
+            }
 
-        //    return true;
-        //}
+            return true;
+        }
 
         protected virtual void SaveButton_Clicked(object sender, EventArgs e)
         {
+            if (!ValidateValues())
+                return;
+
             NewTask = (Resources["taskViewModel"] as TaskViewModel);
             Navigation.PopModalAsync();
         }

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimedTasks.Android", "TimedTasks\TimedTasks.Android\TimedTasks.Android.csproj", "{F9FEE1CE-2C1E-4B88-9CC3-4FAD3B9A9CC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimedTasks", "TimedTasks\TimedTasks\TimedTasks.csproj", "{64B75214-0518-4D31-B8F8-03D1366FF019}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimedTasks", "TimedTasks\TimedTasks\TimedTasks.csproj", "{64B75214-0518-4D31-B8F8-03D1366FF019}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -19,7 +19,10 @@ namespace TimedTasks.Pages
 
         protected override void SaveButton_Clicked(object sender, EventArgs e)
         {
-            task = (Resources["taskViewModel"] as TaskViewModel).PopulateTask(task);
+            if (!ValidateValues())
+                return;
+
+            NewTask = (Resources["taskViewModel"] as TaskViewModel).PopulateTask(task);
             Navigation.PopModalAsync();
         }
     }

@@ -16,7 +16,9 @@ namespace TimedTasks
         public MainPage()
         {
 			InitializeComponent();
-		}
+
+            dateSelector.Date = DateTime.Today;
+        }
 
         private void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -25,7 +27,7 @@ namespace TimedTasks
                 if (listView.SelectedItem != null)
                 {
                     var page = new TaskDetailsPage((TaskViewModel)listView.SelectedItem, dateSelector.Date);
-                    //page.Disappearing += TaskDetailsPage_Disapearing;
+                    page.Disappearing += TaskDetailsPage_Disapearing;
                     Navigation.PushModalAsync(page);
                 }
                 listView.SelectedItem = null;
