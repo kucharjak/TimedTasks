@@ -29,7 +29,7 @@ namespace TimedTasks.Utils
         /// <summary>
         /// Příznaky, které se použijí při otevření spojení s databází.
         /// </summary>
-        private const SQLiteOpenFlags openFlags = SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex;
+        private const SQLiteOpenFlags openFlags = SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.SharedCache;
 
         public static void InitDB()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -42,7 +43,7 @@ namespace TimedTasks.ViewModels
             IncreaseDateByMonthCommand = new Command(() => SelectedDate = SelectedDate.AddMonths(1));
             DecreaseDateByMonthCommand = new Command(() => SelectedDate = SelectedDate.AddMonths(-1));
 
-            AddNewTaskCommand = new Command<TaskViewModel>((task) => 
+            AddNewTaskCommand = new Command<TaskViewModel>((task) =>
             {
                 Utils.Database.InsertTask(task);
                 RefreshTasks();
@@ -73,7 +74,8 @@ namespace TimedTasks.ViewModels
 
         private void RefreshTasks()
         {
-            Tasks = new ObservableCollection<TaskViewModel>(Utils.Database.SelectTasks(SelectedDate.Date, !ShowFinished));
+            Tasks = new ObservableCollection<TaskViewModel>(
+                Utils.Database.SelectTasks(SelectedDate.Date, !ShowFinished).OrderBy(task => task.DueDate).ThenBy(task => task.StartTime));
         }
     }
 }

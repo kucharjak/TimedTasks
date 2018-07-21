@@ -22,7 +22,13 @@ namespace TimedTasks.Pages
             TaskDate.Date = taskDate;
         }
 
-        protected bool ValidateValues()
+        protected void PrepareUserInput()
+        {
+            Summary.Text = Summary.Text?.Trim();
+            Description.Text = Description.Text?.Trim();
+        }
+
+        protected bool ValidateUserInput()
         {
             TaskStartTime.TextColor = Color.Default;
             TaskEndTime.TextColor = Color.Default;
@@ -45,13 +51,19 @@ namespace TimedTasks.Pages
             return true;
         }
 
-        protected virtual void SaveButton_Clicked(object sender, EventArgs e)
+        protected virtual void SaveUserInput()
         {
-            if (!ValidateValues())
-                return;
-
             NewTask = (Resources["taskViewModel"] as TaskViewModel);
             Navigation.PopModalAsync();
+        }
+
+        protected virtual void SaveButton_Clicked(object sender, EventArgs e)
+        {
+            PrepareUserInput();
+            if (!ValidateUserInput())
+                return;
+
+            SaveUserInput();
         }
 
         protected virtual void CancelButton_Clicked(object sender, EventArgs e)

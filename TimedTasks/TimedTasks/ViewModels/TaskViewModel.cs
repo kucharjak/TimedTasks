@@ -24,7 +24,7 @@ namespace TimedTasks.ViewModels
 
         [MaxLength(50)]
         public string Summary { set { SetProperty(ref summary, value); } get { return summary; } }
-        [MaxLength(1000)]
+        [MaxLength(2500)]
         public string Description { set { SetProperty(ref description, value); } get { return description; } }
 
         public bool Finished { set { SetProperty(ref finished, value); } get { return finished; } }

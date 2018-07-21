@@ -29,6 +29,7 @@
             <ListView.Resources>
                 <ResourceDictionary>
                     <converters:TimeSpanToStringConverter x:Key="timeSpanToString" Format="hh\:mm" />
+                    <converters:EmptyStringToBoolConverter x:Key="emptyToBoolInverted" Inverse="True" />
                 </ResourceDictionary>
             </ListView.Resources>
             <ListView.ItemTemplate>
@@ -44,7 +45,7 @@
                                     <Label Text="{Binding EndTime, Converter={StaticResource timeSpanToString}}" HorizontalOptions="End" FontSize="Micro" />
                                 </StackLayout>
                                 <Label Text="{Binding Summary}" HorizontalOptions="Start" FontSize="Medium" />
-                                <Label Text="{Binding Description}" HorizontalOptions="Start" FontSize="Small" />
+                                <Label Text="{Binding Description}" IsVisible="{Binding Description, Converter={StaticResource emptyToBoolInverted}}" HorizontalOptions="Start" FontSize="Small" />
                                 <!--<StackLayout IsVisible="{Binding Selected} " Orientation="Horizontal" PropertyChanged="StackLayout_PropertyChanged">
                                     <Button Text="Upravit" FontSize="Micro" HorizontalOptions="EndAndExpand" Command="{Binding Path=UpdateTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" />
                                     <Button Text="Smazat" FontSize="Micro" HorizontalOptions="End" Command="{Binding Path=RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}"/>
