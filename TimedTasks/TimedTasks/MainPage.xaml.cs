@@ -54,5 +54,15 @@ namespace TimedTasks
             if (page.NewTask != null)
                 (Resources["timedTasksViewModel"] as TimedTasksViewModel).UpdateTaskCommand.Execute(page.NewTask);
         }
+        
+        private void ToolbarDaily_Activated(object sender, EventArgs e)
+        {
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = false;
+        }
+
+        private void ToolbarAll_Activated(object sender, EventArgs e)
+        {
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = true;
+        }
     }
 }

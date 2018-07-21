@@ -8,6 +8,13 @@ namespace TimedTasks.ViewModels
 {
     public class TaskViewModel : ViewModelBase
     {
+        private const int summaryMaxChar = 2500;
+        [Ignore]
+        public int SummaryMaxChar { get { return summaryMaxChar; } }
+        private const int descriptionMaxChar = 2500;
+        [Ignore]
+        public int DescriptionMaxChar { get { return descriptionMaxChar; } }
+
         private int id;
         private DateTime dueDate;
         private TimeSpan startTime, endTime;
@@ -22,9 +29,9 @@ namespace TimedTasks.ViewModels
         public TimeSpan StartTime { set { SetProperty(ref startTime, value); } get { return startTime; } }
         public TimeSpan EndTime { set { SetProperty(ref endTime, value); } get { return endTime; } }
 
-        [MaxLength(50)]
+        [MaxLength(summaryMaxChar)]
         public string Summary { set { SetProperty(ref summary, value); } get { return summary; } }
-        [MaxLength(2500)]
+        [MaxLength(descriptionMaxChar)]
         public string Description { set { SetProperty(ref description, value); } get { return description; } }
 
         public bool Finished { set { SetProperty(ref finished, value); } get { return finished; } }

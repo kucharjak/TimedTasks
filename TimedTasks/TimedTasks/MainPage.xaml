@@ -8,55 +8,56 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <viewModels:TimedTasksViewModel x:Key="timedTasksViewModel"/>
+            
+            <converters:TimeSpanToStringConverter x:Key="timeSpanToString" Format="hh\:mm" />
+            <converters:EmptyStringToBoolConverter x:Key="emptyToBoolInverted" Inverse="True" />
+            <converters:BoolInverterConverter x:Key="boolInverter"/>
+            <converters:DateTimeToStringConverter x:Key="dateTimeToString" Format="dd.MM.yyyy" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="ToolbarDaily" Text="Denní úkoly" Order="Secondary" Activated="ToolbarDaily_Activated" />
+        <ToolbarItem Name="ToolbarAll" Text="Všechny úkoly" Order="Secondary" Activated="ToolbarAll_Activated" />
+    </ContentPage.ToolbarItems>
 
     <StackLayout Spacing="0" BindingContext="{StaticResource timedTasksViewModel}">
-        
-        <StackLayout BackgroundColor="White" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Spacing="0">
+        <StackLayout BackgroundColor="White" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Spacing="0" IsVisible="{Binding ShowAll, Source={StaticResource timedTasksViewModel}, Converter={StaticResource boolInverter}}">
             <Button Text="&lt;" WidthRequest="50" BackgroundColor="White" HorizontalOptions="Start" Command="{Binding DecreaseDateByDayCommand}" />
             <DatePicker x:Name="dateSelector" Date="{Binding SelectedDate}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" TextColor="Black" Format="d" />
             <Button Text="&gt;" WidthRequest="50" BackgroundColor="White" HorizontalOptions="End" Command="{Binding IncreaseDateByDayCommand}" />
         </StackLayout>
         <BoxView BackgroundColor="Black" HeightRequest="1" />
 
-        <Button Text="Přidat task" Clicked="AddButton_Clicked" />
-
-        <ListView x:Name="listView" ItemsSource="{Binding Tasks}"
-                  SeparatorVisibility="None" HasUnevenRows="True" VerticalOptions="FillAndExpand" 
-                  PropertyChanged="listView_PropertyChanged">
-            
-            <ListView.Resources>
-                <ResourceDictionary>
-                    <converters:TimeSpanToStringConverter x:Key="timeSpanToString" Format="hh\:mm" />
-                    <converters:EmptyStringToBoolConverter x:Key="emptyToBoolInverted" Inverse="True" />
-                </ResourceDictionary>
-            </ListView.Resources>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell BindingContext="{Binding .}">
-                        <ViewCell.ContextActions>
-                            <MenuItem Command="{Binding Path=RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" Text="Smazat" IsDestructive="True" />
-                        </ViewCell.ContextActions>
-                        <Frame Margin="10, 5, 10, 5" Padding="10" BorderColor="LightGray">
-                            <StackLayout Spacing="0" VerticalOptions="CenterAndExpand">
-                                <StackLayout Orientation="Horizontal">
-                                    <Label Text="{Binding StartTime, Converter={StaticResource timeSpanToString}}" HorizontalOptions="StartAndExpand" FontSize="Micro" />
-                                    <Label Text="{Binding EndTime, Converter={StaticResource timeSpanToString}}" HorizontalOptions="End" FontSize="Micro" />
-                                </StackLayout>
-                                <Label Text="{Binding Summary}" HorizontalOptions="Start" FontSize="Medium" />
-                                <Label Text="{Binding Description}" IsVisible="{Binding Description, Converter={StaticResource emptyToBoolInverted}}" HorizontalOptions="Start" FontSize="Small" />
-                                <!--<StackLayout IsVisible="{Binding Selected} " Orientation="Horizontal" PropertyChanged="StackLayout_PropertyChanged">
+        <Grid VerticalOptions="FillAndExpand">
+            <ListView x:Name="listView" ItemsSource="{Binding Tasks}" SeparatorVisibility="None" HasUnevenRows="True" VerticalOptions="FillAndExpand" PropertyChanged="listView_PropertyChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell BindingContext="{Binding .}">
+                            <ViewCell.ContextActions>
+                                <MenuItem Command="{Binding Path=RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" Text="Smazat" IsDestructive="True" />
+                            </ViewCell.ContextActions>
+                            <Frame Margin="10, 5, 10, 5" Padding="10" BorderColor="LightGray">
+                                <StackLayout Spacing="0" VerticalOptions="CenterAndExpand">
+                                    <Label Text="{Binding DueDate, Converter={StaticResource dateTimeToString}}" IsVisible="{Binding ShowAll, Source={StaticResource timedTasksViewModel}}" HorizontalOptions="Center" FontSize="Small" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding StartTime, Converter={StaticResource timeSpanToString}}" HorizontalOptions="Start" FontSize="Micro" />
+                                        <Label Text="{Binding EndTime, Converter={StaticResource timeSpanToString}}" HorizontalOptions="EndAndExpand" FontSize="Micro" />
+                                    </StackLayout>
+                                    <Label Text="{Binding Summary}" HorizontalOptions="Start" FontSize="Medium" />
+                                    <Label Text="{Binding Description}" IsVisible="{Binding Description, Converter={StaticResource emptyToBoolInverted}}" HorizontalOptions="Start" FontSize="Small" />
+                                    <!--<StackLayout IsVisible="{Binding Selected} " Orientation="Horizontal" PropertyChanged="StackLayout_PropertyChanged">
                                     <Button Text="Upravit" FontSize="Micro" HorizontalOptions="EndAndExpand" Command="{Binding Path=UpdateTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" />
                                     <Button Text="Smazat" FontSize="Micro" HorizontalOptions="End" Command="{Binding Path=RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}"/>
                                 </StackLayout>-->
-                            </StackLayout>
-                        </Frame>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button x:Name="btnAddTask" Text="+" FontSize="Large" BorderRadius="30" 
+                    WidthRequest="60" HeightRequest="60" Margin="15" VerticalOptions="End" HorizontalOptions="End" 
+                    Clicked="AddButton_Clicked"/>
+        </Grid>
     </StackLayout>
-    <!--<Button x:Name="btnAddTask" Text="+" FontSize="Large" TextColor="Black" BackgroundColor="White" BorderRadius="30"
-                WidthRequest="60" HeightRequest="60" Margin="15" VerticalOptions="End" HorizontalOptions="End" Grid.Row="1" Grid.ColumnSpan="6" />-->
 </ContentPage>

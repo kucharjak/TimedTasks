@@ -14,10 +14,12 @@ namespace TimedTasks.ViewModels
         private DateTime selectedDate;
         private ObservableCollection<TaskViewModel> tasks;
         private bool showFinished;
+        private bool showAll;
 
         public DateTime SelectedDate { set { SetProperty(ref selectedDate, value); } get { return selectedDate; } }
         public ObservableCollection<TaskViewModel> Tasks { set { SetProperty(ref tasks, value); } get { return tasks; } }
         public bool ShowFinished { set { SetProperty(ref showFinished, value); } get { return showFinished; } }
+        public bool ShowAll { set { SetProperty(ref showAll, value); } get { return showAll; } }
 
         public ICommand IncreaseDateByDayCommand { private set; get; }
         public ICommand DecreaseDateByDayCommand { private set; get; }
@@ -68,14 +70,16 @@ namespace TimedTasks.ViewModels
         {
             switch (e.PropertyName)
             {
+                case "ShowAll":
                 case "SelectedDate": { RefreshTasks(); } break;
             }
         }
 
         private void RefreshTasks()
         {
-            Tasks = new ObservableCollection<TaskViewModel>(
-                Utils.Database.SelectTasks(SelectedDate.Date, !ShowFinished).OrderBy(task => task.DueDate).ThenBy(task => task.StartTime));
+            var tasks = showAll ? Utils.Database.SelectAllTasks(!ShowFinished) : Utils.Database.SelectTasks(SelectedDate.Date, !ShowFinished);
+            tasks = tasks.OrderBy(task => task.DueDate).ThenBy(task => task.StartTime).ToList();
+            Tasks = new ObservableCollection<TaskViewModel>(tasks);
         }
     }
 }

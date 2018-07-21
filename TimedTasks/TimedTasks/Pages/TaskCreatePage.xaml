@@ -2,11 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:TimedTasks.ViewModels"
+             xmlns:converters="clr-namespace:TimedTasks.Converters"
              x:Class="TimedTasks.Pages.TaskCreatePage">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <viewModels:TaskViewModel x:Key="taskViewModel" />
+            <converters:StringLengthToNumberConverter x:Key="stringToInt" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -60,26 +62,42 @@
                             Grid.Row="2" Grid.Column="1" />
                 </Grid>
 
-                <Label Text="Shrnutí"
-                       HorizontalOptions="Start"
-                       VerticalOptions="End"
-                       FontSize="Medium"
-                       Grid.Row="3" Grid.ColumnSpan="2" />
+                <StackLayout Orientation="Horizontal"
+                             Spacing="0"
+                             Grid.Row="3" Grid.ColumnSpan="2">
+                    <Label Text="Shrnutí"
+                           HorizontalOptions="Start"
+                           FontSize="Medium" />
+                    <Label Text="{Binding Text, Source={x:Reference Summary}, Converter={StaticResource stringToInt}}"
+                           HorizontalOptions="EndAndExpand"
+                           FontSize="Medium" />
+                    <Label Text="{Binding MaxLength, Source={x:Reference Summary}, StringFormat='/{0}'}"
+                           HorizontalOptions="End"
+                           FontSize="Medium" />
+                </StackLayout>                
                 <Entry x:Name="Summary" Text="{Binding Summary}"
                        Keyboard="Text"
                        BackgroundColor="LightBlue"
-                       MaxLength="50" />
+                       MaxLength="{Binding SummaryMaxChar}" />
 
-                <Label Text="Popis úkolu"
-                       HorizontalOptions="Start"
-                       VerticalOptions="End"
-                       FontSize="Medium"
-                       Grid.Row="5" Grid.ColumnSpan="2" />
+                <StackLayout Orientation="Horizontal"
+                             Spacing="0"
+                             Grid.Row="5" Grid.ColumnSpan="2">
+                    <Label Text="Popis úkolu"
+                           HorizontalOptions="Start"
+                           FontSize="Medium" />
+                    <Label Text="{Binding Text, Source={x:Reference Description}, Converter={StaticResource stringToInt}}"
+                           HorizontalOptions="EndAndExpand"
+                           FontSize="Medium" />
+                    <Label Text="{Binding MaxLength, Source={x:Reference Description}, StringFormat='/{0}'}"
+                           HorizontalOptions="End"
+                           FontSize="Medium" />
+                </StackLayout>
                 <Editor x:Name="Description" Text="{Binding Description}"
                         VerticalOptions="FillAndExpand"
                         Keyboard="Text"
                         BackgroundColor="LightBlue"
-                        MaxLength="2500" />
+                        MaxLength="{Binding DescriptionMaxChar}" />
 
                 <StackLayout Orientation="Horizontal"
                              Spacing="15" 
