@@ -4,7 +4,6 @@
              xmlns:viewModels="clr-namespace:TimedTasks.ViewModels"
              xmlns:converters="clr-namespace:TimedTasks.Converters"
              x:Class="TimedTasks.MainPage">
-    <ContentPage.Title>Denní úkoly</ContentPage.Title>
     <ContentPage.Resources>
         <ResourceDictionary>
             <viewModels:TimedTasksViewModel x:Key="timedTasksViewModel"/>
@@ -13,9 +12,16 @@
             <converters:EmptyStringToBoolConverter x:Key="emptyToBoolInverted" Inverse="True" />
             <converters:BoolInverterConverter x:Key="boolInverter"/>
             <converters:DateTimeToStringConverter x:Key="dateTimeToString" Format="dd.MM.yyyy" />
+            <converters:SetValueIfTrueConverter x:Key="finishOrResumeTasks" TrueValue="Obnov" FalseValue="Dokonči" />
+            <converters:SetValueIfTrueConverter x:Key="finishedColor" TrueValue="LightGreen" FalseValue="Transparent">
+                <!--<converters:SetValueIfTrueConverter.TrueValue>
+                    <Color>LightGreen</Color>
+                </converters:SetValueIfTrueConverter.TrueValue>-->
+            </converters:SetValueIfTrueConverter>
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ToolbarFinished" Order="Primary" Activated="ToolbarFinished_Activated" />
         <ToolbarItem Name="ToolbarDaily" Text="Denní úkoly" Order="Secondary" Activated="ToolbarDaily_Activated" />
         <ToolbarItem Name="ToolbarAll" Text="Všechny úkoly" Order="Secondary" Activated="ToolbarAll_Activated" />
     </ContentPage.ToolbarItems>
@@ -34,9 +40,10 @@
                     <DataTemplate>
                         <ViewCell BindingContext="{Binding .}">
                             <ViewCell.ContextActions>
-                                <MenuItem Command="{Binding Path=RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" Text="Smazat" IsDestructive="True" />
+                                <MenuItem Command="{Binding FinishOrResumeCommand}" CommandParameter="{StaticResource timedTasksViewModel}" Text="{Binding Finished, Converter={StaticResource finishOrResumeTasks}}" />
+                                <MenuItem Command="{Binding RemoveTaskCommand, Source={StaticResource timedTasksViewModel}}" CommandParameter="{Binding .}" Text="Smazat" IsDestructive="True" />
                             </ViewCell.ContextActions>
-                            <Frame Margin="10, 5, 10, 5" Padding="10" BorderColor="LightGray">
+                            <Frame Margin="10, 5, 10, 5" Padding="10" BorderColor="LightGray" BackgroundColor="{Binding Finished, Converter={StaticResource finishedColor}}">
                                 <StackLayout Spacing="0" VerticalOptions="CenterAndExpand">
                                     <Label Text="{Binding DueDate, Converter={StaticResource dateTimeToString}}" IsVisible="{Binding ShowAll, Source={StaticResource timedTasksViewModel}}" HorizontalOptions="Center" FontSize="Small" />
                                     <StackLayout Orientation="Horizontal">

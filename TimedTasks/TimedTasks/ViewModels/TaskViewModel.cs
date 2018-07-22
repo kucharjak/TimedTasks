@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 using SQLite;
+using System.Windows.Input;
 
 namespace TimedTasks.ViewModels
 {
     public class TaskViewModel : ViewModelBase
     {
-        private const int summaryMaxChar = 2500;
+        private const int summaryMaxChar = 50;
+        private const int descriptionMaxChar = 2500;
+
         [Ignore]
         public int SummaryMaxChar { get { return summaryMaxChar; } }
-        private const int descriptionMaxChar = 2500;
         [Ignore]
         public int DescriptionMaxChar { get { return descriptionMaxChar; } }
 
@@ -39,8 +41,17 @@ namespace TimedTasks.ViewModels
         [Ignore]
         public Color BackgroundColor { set { SetProperty(ref backgroundColor, value); } get { return backgroundColor; } }
 
+        [Ignore]
+        public ICommand FinishOrResumeCommand { private set; get; }
+
         public TaskViewModel()
         {
+            FinishOrResumeCommand = new Command<TimedTasksViewModel>((parent) =>
+            {
+                Finished = !Finished;
+                if (parent != null)
+                    parent.UpdateTaskCommand.Execute(this);
+            });
         }
 
         public TaskViewModel Copy(bool copyId)

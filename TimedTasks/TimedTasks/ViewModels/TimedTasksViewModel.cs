@@ -71,6 +71,7 @@ namespace TimedTasks.ViewModels
             switch (e.PropertyName)
             {
                 case "ShowAll":
+                case "ShowFinished":
                 case "SelectedDate": { RefreshTasks(); } break;
             }
         }

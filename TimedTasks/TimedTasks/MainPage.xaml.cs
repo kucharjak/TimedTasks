@@ -8,6 +8,7 @@ using System.Windows.Input;
 using TimedTasks.ViewModels;
 using TimedTasks.Pages;
 using Xamarin.Forms;
+using TimedTasks.Utils;
 
 namespace TimedTasks
 {
@@ -18,6 +19,23 @@ namespace TimedTasks
 			InitializeComponent();
 
             dateSelector.Date = DateTime.Today;
+
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = Settings.ShowAllSetting;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished = Settings.ShowFinishedSetting;
+            RefreshPage();
+        }
+
+        private void RefreshPage()
+        {
+            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll)
+                Title = "Všechny úkoly";
+            else
+                Title = "Denní úkoly";
+
+            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished)
+                ToolbarFinished.Icon = "baseline_visibility_white_48dp.png";
+            else
+                ToolbarFinished.Icon = "baseline_visibility_off_white_48dp.png";
         }
 
         private void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -57,12 +75,24 @@ namespace TimedTasks
         
         private void ToolbarDaily_Activated(object sender, EventArgs e)
         {
+            Settings.ShowAllSetting = false;
             (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = false;
+            RefreshPage();
         }
 
         private void ToolbarAll_Activated(object sender, EventArgs e)
         {
+            Settings.ShowAllSetting = true;
             (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = true;
+            RefreshPage();
+        }
+
+        private void ToolbarFinished_Activated(object sender, EventArgs e)
+        {
+            var setting = !Settings.ShowFinishedSetting;
+            Settings.ShowFinishedSetting = setting;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished = setting;
+            RefreshPage();
         }
     }
 }
