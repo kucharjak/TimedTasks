@@ -1,41 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using TimedTasks.ViewModels;
-using TimedTasks.Pages;
 using Xamarin.Forms;
 using TimedTasks.Utils;
+using TimedTasks.Pages;
+using TimedTasks.ViewModels;
+using static TimedTasks.ViewModels.TimedTasksViewModel;
 
 namespace TimedTasks
 {
 	public partial class MainPage : ContentPage
 	{
+        bool listViewAnimationRunning = false;
+        const int listViewAnimationTime = 100;
+
         public MainPage()
         {
 			InitializeComponent();
 
             dateSelector.Date = DateTime.Today;
 
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = Settings.ShowAllSetting;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished = Settings.ShowFinishedSetting;
-            RefreshPage();
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).PropertyChanged += MainPage_PropertyChanged;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks = Settings.ShowFinished;
+
+            RefreshVisibilityIcon();
+
+            if (Settings.ShowAllTasks)
+                ShowAllTasks();
+            else
+                ShowDailyTasks();
         }
 
-        private void RefreshPage()
+        private void MainPage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll)
-                Title = "Všechny úkoly";
-            else
-                Title = "Denní úkoly";
+            switch(e.PropertyName)
+            {
+                case nameof(TimedTasksViewModel.ShowFinishedTasks): RefreshVisibilityIcon(); break;
+            } 
+        }
 
-            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished)
-                ToolbarFinished.Icon = "baseline_visibility_white_48dp.png";
+        private void RefreshVisibilityIcon()
+        {
+            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks)
+                ToolbarFinished.Icon = "baseline_visibility_white_36dp.png";
             else
-                ToolbarFinished.Icon = "baseline_visibility_off_white_48dp.png";
+                ToolbarFinished.Icon = "baseline_visibility_off_white_36dp.png";
         }
 
         private void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -75,24 +82,74 @@ namespace TimedTasks
         
         private void ToolbarDaily_Activated(object sender, EventArgs e)
         {
-            Settings.ShowAllSetting = false;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = false;
-            RefreshPage();
+            Settings.ShowAllTasks = false;
+            ShowDailyTasks();
+            
         }
 
         private void ToolbarAll_Activated(object sender, EventArgs e)
         {
-            Settings.ShowAllSetting = true;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAll = true;
-            RefreshPage();
+            Settings.ShowAllTasks = true;
+            ShowAllTasks();
+        }
+
+        private void ShowDailyTasks()
+        {
+            Title = "Denní úkoly";
+            listView.SetBinding(ListView.ItemsSourceProperty, "Tasks");
+            listView.IsGroupingEnabled = false;
+            dateView.IsVisible = true;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowDailyTasksCommand.Execute(null);
+        }
+
+        private void ShowAllTasks()
+        {
+            Title = "Všechny úkoly";
+            listView.SetBinding(ListView.ItemsSourceProperty, "GroupedTasks");
+            listView.IsGroupingEnabled = true;
+            dateView.IsVisible = false;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAllTasksCommand.Execute(null);
         }
 
         private void ToolbarFinished_Activated(object sender, EventArgs e)
         {
-            var setting = !Settings.ShowFinishedSetting;
-            Settings.ShowFinishedSetting = setting;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinished = setting;
-            RefreshPage();
+            var setting = !Settings.ShowFinished;
+            Settings.ShowFinished = setting;
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks = setting;
+        }
+
+        private async void Button_DecreaseDay_Clicked(object sender, EventArgs e)
+        {
+            if (listViewAnimationRunning)
+                return;
+
+            listViewAnimationRunning = true;
+            listView.FadeTo(0.2, listViewAnimationTime);
+            await listView.TranslateTo(listView.Width, 0, listViewAnimationTime, Easing.SinIn);
+
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).DecreaseDateByDayCommand.Execute(null);
+
+            listView.TranslationX = -1 * listView.Width;
+            listView.FadeTo(1, listViewAnimationTime);
+            await listView.TranslateTo(0, 0, listViewAnimationTime, Easing.SinOut);
+            listViewAnimationRunning = false;
+        }
+
+        private async void Button_IncreaseDay_Clicked(object sender, EventArgs e)
+        {
+            if (listViewAnimationRunning)
+                return;
+
+            listViewAnimationRunning = true;
+            listView.FadeTo(0.2, listViewAnimationTime);
+            await listView.TranslateTo(-1 * listView.Width, 0, listViewAnimationTime, Easing.SinIn);
+
+            (Resources["timedTasksViewModel"] as TimedTasksViewModel).IncreaseDateByDayCommand.Execute(null);
+
+            listView.TranslationX = listView.Width;
+            listView.FadeTo(1, listViewAnimationTime);
+            await listView.TranslateTo(0, 0, listViewAnimationTime, Easing.SinOut);
+            listViewAnimationRunning = false;
         }
     }
 }

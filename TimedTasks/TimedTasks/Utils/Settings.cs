@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
+using TimedTasks.ViewModels;
 
 namespace TimedTasks.Utils
 {
     public static class Settings
     {
-        const string showAllSettingName = "showAll";
-        const string showFinishedSettingsName = "showFinished";
+        const string showAllTasksSettingName = "showAllTasks";
+        const string showFinishedSettingName = "showFinished";
 
-        public static bool ShowAllSetting
+        public static bool ShowAllTasks
         {
-            get { return (bool)GetSetting(showAllSettingName, false); }
-            set { SetSettings(showAllSettingName, value); }
+            get { return (bool)GetSetting(showAllTasksSettingName, false); }
+            set { SetSettings(showAllTasksSettingName, value); }
         }
 
-        public static bool ShowFinishedSetting
+        public static bool ShowFinished
         {
-            get { return (bool)GetSetting(showFinishedSettingsName, false); }
-            set { SetSettings(showFinishedSettingsName, value); }
+            get { return (bool)GetSetting(showFinishedSettingName, false); }
+            set { SetSettings(showFinishedSettingName, value); }
         }
 
         private static void SetSettings(string settingName, object value)
