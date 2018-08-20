@@ -44,6 +44,9 @@ namespace TimedTasks.ViewModels
         [Ignore]
         public ICommand FinishOrResumeCommand { private set; get; }
 
+        [Ignore]
+        public ICommand RemoveCommand { private set; get; }
+
         public TaskViewModel()
         {
             FinishOrResumeCommand = new Command<TimedTasksViewModel>((parent) =>
@@ -51,6 +54,12 @@ namespace TimedTasks.ViewModels
                 Finished = !Finished;
                 if (parent != null)
                     parent.UpdateTaskCommand.Execute(this);
+            });
+
+            RemoveCommand = new Command<TimedTasksViewModel>((parent) =>
+            {
+                if (parent != null)
+                    parent.RemoveTaskCommand.Execute(this);
             });
         }
 

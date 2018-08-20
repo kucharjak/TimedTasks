@@ -70,5 +70,31 @@ namespace TimedTasks.Pages
         {
             Navigation.PopModalAsync();
         }
+
+        private void TaskEndTime_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(TimePicker.Time):
+                    {
+                        if (TaskEndTime.Time < TaskStartTime.Time)
+                            TaskStartTime.Time = TaskEndTime.Time;
+                    }
+                    break;
+            }
+        }
+
+        private void TaskStartTime_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case nameof(TimePicker.Time):
+                    {
+                        if (TaskStartTime.Time > TaskEndTime.Time)
+                            TaskEndTime.Time = TaskStartTime.Time;
+                    }
+                    break;
+            }
+        }
     }
 }

@@ -45,17 +45,47 @@ namespace TimedTasks
                 ToolbarFinished.Icon = "baseline_visibility_off_white_36dp.png";
         }
 
-        private void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private async void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "SelectedItem")
             {
                 if (listView.SelectedItem != null)
                 {
-                    var page = new TaskDetailsPage((TaskViewModel)listView.SelectedItem, dateSelector.Date);
-                    page.Disappearing += TaskDetailsPage_Disapearing;
-                    Navigation.PushModalAsync(page);
+                    var item = (listView.SelectedItem as TaskViewModel);
+                    listView.SelectedItem = null;
+                    var result = await DisplayActionSheet(
+                        item.Summary,
+                        null,
+                        null,
+                        "Upravit",
+                        !item.Finished ? "Dokončit" : "Obnovit",
+                        "Smazat");
+
+                    switch(result)
+                    {
+                        case "Upravit":
+                            {
+                                var page = new TaskDetailsPage(item, dateSelector.Date);
+                                page.Disappearing += TaskDetailsPage_Disapearing;
+                                await Navigation.PushModalAsync(page);
+                            }
+                            break;
+                        case "Dokončit":
+                        case "Obnovit":
+                            {
+                                item.FinishOrResumeCommand.Execute((Resources["timedTasksViewModel"] as TimedTasksViewModel));
+                            }
+                            break;
+                        case "Smazat":
+                            {
+                                if (await DisplayAlert("Opravdu?", "Opravdu chcete úkol smazat?", "Ano", "Ne"))
+                                {
+                                    item.RemoveCommand.Execute((Resources["timedTasksViewModel"] as TimedTasksViewModel));
+                                }
+                            }
+                            break;
+                    }   
                 }
-                listView.SelectedItem = null;
             }
         }
 

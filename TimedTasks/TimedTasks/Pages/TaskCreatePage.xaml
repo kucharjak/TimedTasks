@@ -46,20 +46,22 @@
                        FontSize="Medium"
                        Grid.Row="1" />
                     <TimePicker x:Name="TaskStartTime" Time="{Binding StartTime}"
-                            BackgroundColor="LightBlue"
-                            VerticalOptions="FillAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            Grid.Row="1" Grid.Column="1" />
+                                BackgroundColor="LightBlue"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                PropertyChanged="TaskStartTime_PropertyChanged"
+                                Grid.Row="1" Grid.Column="1" />
 
                     <Label Text="Konec úkolu"
                        VerticalOptions="CenterAndExpand"
                        FontSize="Medium"
                        Grid.Row="2" />
                     <TimePicker x:Name="TaskEndTime" Time="{Binding EndTime}"
-                            BackgroundColor="LightBlue"
-                            VerticalOptions="FillAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            Grid.Row="2" Grid.Column="1" />
+                                BackgroundColor="LightBlue"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                PropertyChanged="TaskEndTime_PropertyChanged"
+                                Grid.Row="2" Grid.Column="1" />
                 </Grid>
 
                 <StackLayout Orientation="Horizontal"

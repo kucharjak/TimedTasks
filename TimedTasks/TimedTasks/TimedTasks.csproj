@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <ApplicationIcon />
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Options\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
