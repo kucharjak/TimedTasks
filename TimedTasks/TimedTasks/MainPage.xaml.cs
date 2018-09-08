@@ -4,6 +4,7 @@ using TimedTasks.Utils;
 using TimedTasks.Pages;
 using TimedTasks.ViewModels;
 using static TimedTasks.ViewModels.TimedTasksViewModel;
+using TimedTasks.Converters;
 
 namespace TimedTasks
 {
@@ -12,39 +13,31 @@ namespace TimedTasks
         bool listViewAnimationRunning = false;
         const int listViewAnimationTime = 100;
 
+        TimedTasksViewModel tasks;
+
         public MainPage()
         {
 			InitializeComponent();
 
             dateSelector.Date = DateTime.Today;
 
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).PropertyChanged += MainPage_PropertyChanged;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks = Settings.ShowFinished;
+            tasks = (Resources["timedTasksViewModel"] as TimedTasksViewModel);
+            
+            ToolbarFinished.Command = tasks.ChangeFinishedVisibilityCommand;
 
-            RefreshVisibilityIcon();
+            ToolbarFinished.BindingContext = tasks;
+            ToolbarFinished.SetBinding(MenuItem.IconProperty, "FinishedTasksVisible", converter: new SetValueIfTrueConverter()
+                {
+                    TrueValue = ImageSource.FromFile("baseline_visibility_white_36dp.png"),
+                    FalseValue = ImageSource.FromFile("baseline_visibility_off_white_36dp.png")
+                });
 
-            if (Settings.ShowAllTasks)
-                ShowAllTasks();
-            else
+            if (tasks.TaskSelectOption == TaskSelectOptions.CurrentDay)
                 ShowDailyTasks();
-        }
-
-        private void MainPage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch(e.PropertyName)
-            {
-                case nameof(TimedTasksViewModel.ShowFinishedTasks): RefreshVisibilityIcon(); break;
-            } 
-        }
-
-        private void RefreshVisibilityIcon()
-        {
-            if ((Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks)
-                ToolbarFinished.Icon = "baseline_visibility_white_36dp.png";
             else
-                ToolbarFinished.Icon = "baseline_visibility_off_white_36dp.png";
+                ShowAllTasks();
         }
-
+        
         private async void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "SelectedItem")
@@ -73,14 +66,14 @@ namespace TimedTasks
                         case "Dokončit":
                         case "Obnovit":
                             {
-                                item.FinishOrResumeCommand.Execute((Resources["timedTasksViewModel"] as TimedTasksViewModel));
+                                item.FinishOrResumeCommand.Execute(tasks);
                             }
                             break;
                         case "Smazat":
                             {
                                 if (await DisplayAlert("Opravdu?", "Opravdu chcete úkol smazat?", "Ano", "Ne"))
                                 {
-                                    item.RemoveCommand.Execute((Resources["timedTasksViewModel"] as TimedTasksViewModel));
+                                    item.RemoveCommand.Execute(tasks);
                                 }
                             }
                             break;
@@ -100,26 +93,23 @@ namespace TimedTasks
         {
             var page = (sender as TaskCreatePage);
             if (page.NewTask != null)
-                (Resources["timedTasksViewModel"] as TimedTasksViewModel).AddNewTaskCommand.Execute(page.NewTask);
+                tasks.AddNewTaskCommand.Execute(page.NewTask);
         }
 
         private void TaskDetailsPage_Disapearing(object sender, EventArgs e)
         {
             var page = (sender as TaskDetailsPage);
             if (page.NewTask != null)
-                (Resources["timedTasksViewModel"] as TimedTasksViewModel).UpdateTaskCommand.Execute(page.NewTask);
+                tasks.UpdateTaskCommand.Execute(page.NewTask);
         }
         
         private void ToolbarDaily_Activated(object sender, EventArgs e)
         {
-            Settings.ShowAllTasks = false;
             ShowDailyTasks();
-            
         }
 
         private void ToolbarAll_Activated(object sender, EventArgs e)
         {
-            Settings.ShowAllTasks = true;
             ShowAllTasks();
         }
 
@@ -129,7 +119,7 @@ namespace TimedTasks
             listView.SetBinding(ListView.ItemsSourceProperty, "Tasks");
             listView.IsGroupingEnabled = false;
             dateView.IsVisible = true;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowDailyTasksCommand.Execute(null);
+            tasks.ShowDailyTasksCommand.Execute(null);
         }
 
         private void ShowAllTasks()
@@ -138,14 +128,7 @@ namespace TimedTasks
             listView.SetBinding(ListView.ItemsSourceProperty, "GroupedTasks");
             listView.IsGroupingEnabled = true;
             dateView.IsVisible = false;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowAllTasksCommand.Execute(null);
-        }
-
-        private void ToolbarFinished_Activated(object sender, EventArgs e)
-        {
-            var setting = !Settings.ShowFinished;
-            Settings.ShowFinished = setting;
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).ShowFinishedTasks = setting;
+            tasks.ShowAllTasksCommand.Execute(null);
         }
 
         private async void Button_DecreaseDay_Clicked(object sender, EventArgs e)
@@ -153,16 +136,18 @@ namespace TimedTasks
             if (listViewAnimationRunning)
                 return;
 
+#pragma warning disable  CS4014 
             listViewAnimationRunning = true;
             listView.FadeTo(0.2, listViewAnimationTime);
             await listView.TranslateTo(listView.Width, 0, listViewAnimationTime, Easing.SinIn);
 
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).DecreaseDateByDayCommand.Execute(null);
+            tasks.DecreaseDateByDayCommand.Execute(null);
 
             listView.TranslationX = -1 * listView.Width;
             listView.FadeTo(1, listViewAnimationTime);
             await listView.TranslateTo(0, 0, listViewAnimationTime, Easing.SinOut);
             listViewAnimationRunning = false;
+#pragma warning restore
         }
 
         private async void Button_IncreaseDay_Clicked(object sender, EventArgs e)
@@ -170,16 +155,18 @@ namespace TimedTasks
             if (listViewAnimationRunning)
                 return;
 
+#pragma warning disable  CS4014 
             listViewAnimationRunning = true;
             listView.FadeTo(0.2, listViewAnimationTime);
             await listView.TranslateTo(-1 * listView.Width, 0, listViewAnimationTime, Easing.SinIn);
 
-            (Resources["timedTasksViewModel"] as TimedTasksViewModel).IncreaseDateByDayCommand.Execute(null);
+            tasks.IncreaseDateByDayCommand.Execute(null);
 
             listView.TranslationX = listView.Width;
             listView.FadeTo(1, listViewAnimationTime);
             await listView.TranslateTo(0, 0, listViewAnimationTime, Easing.SinOut);
             listViewAnimationRunning = false;
+#pragma warning restore
         }
     }
 }

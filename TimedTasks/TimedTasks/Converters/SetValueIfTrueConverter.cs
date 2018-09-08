@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace TimedTasks.Converters
 {
-    class SetValueIfTrueConverter : IValueConverter
+    public class SetValueIfTrueConverter : IValueConverter
     {
         public object TrueValue { get; set; }
         public object FalseValue { get; set; }
