@@ -12,16 +12,25 @@ namespace TimedTasks.ViewModels
     public class TimedTasksViewModel : ViewModelBase
     {
         private DateTime selectedDate;
-        private ObservableCollection<TaskViewModel> tasks;
-        private ObservableCollection<TaskGroupViewModel> groupedTasks;
-        private bool finishedTasksVisible;
-        private TaskSelectOptions taskSelectOption;
-
         public DateTime SelectedDate { set { SetProperty(ref selectedDate, value); } get { return selectedDate; } }
-        public ObservableCollection<TaskViewModel> Tasks { set { SetProperty(ref tasks, value); } get { return tasks; } }
-        public ObservableCollection<TaskGroupViewModel> GroupedTasks { set { SetProperty(ref groupedTasks, value); } get { return groupedTasks; } }
+
+        private ObservableCollection<object> tasks;
+        public ObservableCollection<object> Tasks { set { SetProperty(ref tasks, value); } get { return tasks; } }
+        
+        private bool finishedTasksVisible;
         public bool FinishedTasksVisible { private set { SetProperty(ref finishedTasksVisible, value); } get { return finishedTasksVisible; } }
+
+        private TaskSelectOptions taskSelectOption;
         public TaskSelectOptions TaskSelectOption { set { SetProperty(ref taskSelectOption, value); } get { return taskSelectOption; } }
+
+        private string title;
+        public string Title { private set { SetProperty(ref title, value); } get { return title; } }
+
+        private bool groupingEnabled;
+        public bool GroupingEnabled { private set { SetProperty(ref groupingEnabled, value); } get { return groupingEnabled; } }
+
+        private bool dateSelectorVisible;
+        public bool DateSelectorVisible { private set { SetProperty(ref dateSelectorVisible, value); } get { return dateSelectorVisible; } }
 
         public ICommand IncreaseDateByDayCommand { private set; get; }
         public ICommand DecreaseDateByDayCommand { private set; get; }
@@ -36,7 +45,7 @@ namespace TimedTasks.ViewModels
         public ICommand ShowAllTasksCommand { private set; get; }
 
         public ICommand ChangeFinishedVisibilityCommand { private set; get; }
-
+        
         public TimedTasksViewModel()
         {
             Utils.Database.InitDB();
@@ -44,8 +53,7 @@ namespace TimedTasks.ViewModels
 
             PropertyChanged += TimedTasksViewModel_PropertyChanged;
 
-            tasks = new ObservableCollection<TaskViewModel>();
-            groupedTasks = new ObservableCollection<TaskGroupViewModel>();
+            tasks = new ObservableCollection<object>();
 
             IncreaseDateByDayCommand = new Command(() => SelectedDate = SelectedDate.AddDays(1));
             DecreaseDateByDayCommand = new Command(() => SelectedDate = SelectedDate.AddDays(-1));
@@ -69,12 +77,13 @@ namespace TimedTasks.ViewModels
                 Utils.Database.UpdateTask(task);
                 RefreshTasks();
             });
-
+            
             ShowDailyTasksCommand = new Command(() =>
             {
                 TaskSelectOption = TaskSelectOptions.CurrentDay;
-
                 Utils.AppData.Data.TaskSelectOption = TaskSelectOption.ToString();
+
+                SetTaskSettings();
                 LoadTaskVisibility();
                 RefreshTasks();
             });
@@ -82,8 +91,9 @@ namespace TimedTasks.ViewModels
             ShowAllTasksCommand = new Command(() =>
             {
                 TaskSelectOption = TaskSelectOptions.AllDaysByDate;
-
                 Utils.AppData.Data.TaskSelectOption = TaskSelectOption.ToString();
+
+                SetTaskSettings();
                 LoadTaskVisibility();
                 RefreshTasks();
             });
@@ -100,9 +110,30 @@ namespace TimedTasks.ViewModels
 
                 RefreshTasks();
             });
-
+            
             LoadSettings();
+            SetTaskSettings();
             RefreshTasks();
+        }
+
+        private void SetTaskSettings()
+        {
+            switch (TaskSelectOption)
+            {
+                case TaskSelectOptions.CurrentDay:
+                    {
+                        Title = "Denní úkoly";
+                        DateSelectorVisible = true;
+                        GroupingEnabled = false;
+                    }
+                    break;
+                case TaskSelectOptions.AllDaysByDate:
+                    {
+                        Title = "Všechny úkoly";
+                        DateSelectorVisible = false;
+                        GroupingEnabled = true;
+                    } break;
+            }
         }
 
         private void LoadTaskVisibility()
@@ -140,41 +171,31 @@ namespace TimedTasks.ViewModels
 
         private void RefreshTasks()
         {
-            var tasks = (TaskSelectOption == TaskSelectOptions.AllDaysByDate) ?
+            var tmpTasks = (TaskSelectOption == TaskSelectOptions.AllDaysByDate) ?
                 Utils.Database.SelectAllTasks(!FinishedTasksVisible) :
                 Utils.Database.SelectTasks(SelectedDate.Date, !FinishedTasksVisible);
 
-            tasks = tasks.OrderBy(task => task.DueDate).ThenBy(task => task.StartTime).ToList();
+            tmpTasks = tmpTasks.OrderBy(task => task.DueDate).ThenBy(task => task.StartTime).ToList();
 
             if (TaskSelectOption == TaskSelectOptions.CurrentDay)
-            {
-                GroupedTasks.Clear();
-                Tasks = new ObservableCollection<TaskViewModel>(tasks);
-            }
+                Tasks = new ObservableCollection<object>(tmpTasks);
             else
-            {
-                Tasks.Clear();
-                GroupedTasks = GroupTasks(tasks, TaskSelectOption);
-            }
+                Tasks = new ObservableCollection<object>(GroupTasks(tmpTasks, TaskSelectOption));
         }
 
-        private ObservableCollection<TaskGroupViewModel> GroupTasks(List<TaskViewModel> tasks, TaskSelectOptions grouping)
+        private List<object> GroupTasks(List<TaskViewModel> tasks, TaskSelectOptions options)
         {
-            var resultGroups = new ObservableCollection<TaskGroupViewModel>();
+            var resultGroups = new List<object>();
 
             foreach (var task in tasks)
             {
-                var groupName = "";
-                switch (grouping)
+                var groupName = ""; 
+                switch(options)
                 {
-                    case TaskSelectOptions.AllDaysByDate:
-                        {
-                            groupName = task.DueDate.ToString("D");
-                        }
-                        break;
+                    case TaskSelectOptions.AllDaysByDate: { groupName = task.DueDate.ToString("D"); } break;
                 }
 
-                var group = resultGroups.Where(grp => grp.GroupName == groupName).FirstOrDefault();
+                var group = (resultGroups.Where(grp  => (grp as TaskGroupViewModel).GroupName == groupName).FirstOrDefault() as TaskGroupViewModel);
                 if (group == null)
                 {
                     group = new TaskGroupViewModel() { GroupName = groupName };
@@ -186,7 +207,7 @@ namespace TimedTasks.ViewModels
 
             return resultGroups;
         }
-
+        
         public enum TaskSelectOptions
         {
             CurrentDay,

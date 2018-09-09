@@ -19,12 +19,16 @@
     </ContentPage.Resources>
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="ToolbarFinished" Order="Primary" />
-        <ToolbarItem Name="ToolbarDaily" Text="Denní úkoly" Order="Secondary" Activated="ToolbarDaily_Activated" />
-        <ToolbarItem Name="ToolbarAll" Text="Všechny úkoly" Order="Secondary" Activated="ToolbarAll_Activated" />
     </ContentPage.ToolbarItems>
 
     <StackLayout Spacing="0" BindingContext="{StaticResource timedTasksViewModel}">
-        <StackLayout x:Name="dateView" BackgroundColor="White" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Spacing="0">
+        <StackLayout x:Name="dateView" 
+                     IsVisible="{Binding DateSelectorVisible}"
+                     BackgroundColor="White" 
+                     HorizontalOptions="FillAndExpand" 
+                     Orientation="Horizontal" 
+                     Spacing="0">
+            
             <Button Text="&lt;" WidthRequest="50" BackgroundColor="White" HorizontalOptions="Start" Clicked="Button_DecreaseDay_Clicked" /> <!--Command="{Binding DecreaseDateByDayCommand}"-->
             <DatePicker x:Name="dateSelector" Date="{Binding SelectedDate}" VerticalOptions="Center" HorizontalOptions="CenterAndExpand" TextColor="Black" Format="d" />
             <Button Text="&gt;" WidthRequest="50" BackgroundColor="White" HorizontalOptions="End" Clicked="Button_IncreaseDay_Clicked" /> <!--Command="{Binding IncreaseDateByDayCommand}"-->
@@ -32,7 +36,13 @@
         <BoxView BackgroundColor="Black" HeightRequest="1" />
 
         <Grid VerticalOptions="FillAndExpand">
-            <ListView x:Name="listView" SeparatorVisibility="None" HasUnevenRows="True" VerticalOptions="FillAndExpand" PropertyChanged="listView_PropertyChanged">
+            <ListView x:Name="listView" 
+                      ItemsSource="{Binding Tasks}" 
+                      IsGroupingEnabled="{Binding GroupingEnabled}"
+                      SeparatorVisibility="None" 
+                      HasUnevenRows="True" 
+                      VerticalOptions="FillAndExpand" 
+                      PropertyChanged="listView_PropertyChanged">
                 <ListView.GroupHeaderTemplate>
                     <DataTemplate>
                         <ViewCell BindingContext="{StaticResource taskGroup}">

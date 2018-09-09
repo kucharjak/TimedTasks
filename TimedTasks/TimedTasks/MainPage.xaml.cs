@@ -32,10 +32,10 @@ namespace TimedTasks
                     FalseValue = ImageSource.FromFile("baseline_visibility_off_white_36dp.png")
                 });
 
-            if (tasks.TaskSelectOption == TaskSelectOptions.CurrentDay)
-                ShowDailyTasks();
-            else
-                ShowAllTasks();
+            this.BindingContext = tasks;
+            this.SetBinding(ContentPage.TitleProperty, "Title");
+            this.ToolbarItems.Add(new ToolbarItem() { Text = "Denní úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowDailyTasksCommand });
+            this.ToolbarItems.Add(new ToolbarItem() { Text = "Všechny úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowAllTasksCommand });
         }
         
         private async void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -103,34 +103,6 @@ namespace TimedTasks
                 tasks.UpdateTaskCommand.Execute(page.NewTask);
         }
         
-        private void ToolbarDaily_Activated(object sender, EventArgs e)
-        {
-            ShowDailyTasks();
-        }
-
-        private void ToolbarAll_Activated(object sender, EventArgs e)
-        {
-            ShowAllTasks();
-        }
-
-        private void ShowDailyTasks()
-        {
-            Title = "Denní úkoly";
-            listView.SetBinding(ListView.ItemsSourceProperty, "Tasks");
-            listView.IsGroupingEnabled = false;
-            dateView.IsVisible = true;
-            tasks.ShowDailyTasksCommand.Execute(null);
-        }
-
-        private void ShowAllTasks()
-        {
-            Title = "Všechny úkoly";
-            listView.SetBinding(ListView.ItemsSourceProperty, "GroupedTasks");
-            listView.IsGroupingEnabled = true;
-            dateView.IsVisible = false;
-            tasks.ShowAllTasksCommand.Execute(null);
-        }
-
         private async void Button_DecreaseDay_Clicked(object sender, EventArgs e)
         {
             if (listViewAnimationRunning)
