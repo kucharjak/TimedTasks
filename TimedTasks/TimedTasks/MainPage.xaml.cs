@@ -37,48 +37,52 @@ namespace TimedTasks
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Denní úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowDailyTasksCommand });
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Všechny úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowAllTasksCommand });
         }
-        
-        private async void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+
+        private async void EditButton_Clicked(object sender, EventArgs e)
+        {
+            var item = ((sender as Button).BindingContext as TaskViewModel);
+            if (item == null)
+                return;
+
+            var result = await DisplayActionSheet(
+                item.Summary,
+                null,
+                null,
+                "Upravit",
+                !item.Finished ? "Dokončit" : "Obnovit",
+                "Smazat");
+
+            switch (result)
+            {
+                case "Upravit":
+                    {
+                        var page = new TaskDetailsPage(item, dateSelector.Date);
+                        page.Disappearing += TaskDetailsPage_Disapearing;
+                        await Navigation.PushModalAsync(page);
+                    }
+                    break;
+                case "Dokončit":
+                case "Obnovit":
+                    {
+                        item.FinishOrResumeCommand.Execute(tasks);
+                    }
+                    break;
+                case "Smazat":
+                    {
+                        if (await DisplayAlert("Opravdu?", "Opravdu chcete úkol smazat?", "Ano", "Ne"))
+                        {
+                            item.RemoveCommand.Execute(tasks);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void listView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "SelectedItem")
             {
-                if (listView.SelectedItem != null)
-                {
-                    var item = (listView.SelectedItem as TaskViewModel);
-                    listView.SelectedItem = null;
-                    var result = await DisplayActionSheet(
-                        item.Summary,
-                        null,
-                        null,
-                        "Upravit",
-                        !item.Finished ? "Dokončit" : "Obnovit",
-                        "Smazat");
-
-                    switch(result)
-                    {
-                        case "Upravit":
-                            {
-                                var page = new TaskDetailsPage(item, dateSelector.Date);
-                                page.Disappearing += TaskDetailsPage_Disapearing;
-                                await Navigation.PushModalAsync(page);
-                            }
-                            break;
-                        case "Dokončit":
-                        case "Obnovit":
-                            {
-                                item.FinishOrResumeCommand.Execute(tasks);
-                            }
-                            break;
-                        case "Smazat":
-                            {
-                                if (await DisplayAlert("Opravdu?", "Opravdu chcete úkol smazat?", "Ano", "Ne"))
-                                {
-                                    item.RemoveCommand.Execute(tasks);
-                                }
-                            }
-                            break;
-                    }   
-                }
+                listView.SelectedItem = null;
             }
         }
 

@@ -82,20 +82,12 @@ namespace TimedTasks.ViewModels
             {
                 TaskSelectOption = TaskSelectOptions.CurrentDay;
                 Utils.AppData.Data.TaskSelectOption = TaskSelectOption.ToString();
-
-                SetTaskSettings();
-                LoadTaskVisibility();
-                RefreshTasks();
             });
 
             ShowAllTasksCommand = new Command(() =>
             {
                 TaskSelectOption = TaskSelectOptions.AllDaysByDate;
                 Utils.AppData.Data.TaskSelectOption = TaskSelectOption.ToString();
-
-                SetTaskSettings();
-                LoadTaskVisibility();
-                RefreshTasks();
             });
 
             ChangeFinishedVisibilityCommand = new Command(() =>
@@ -164,6 +156,12 @@ namespace TimedTasks.ViewModels
             {
                 case nameof(SelectedDate):
                     {
+                        RefreshTasks();
+                    } break;
+                case nameof(TaskSelectOption):
+                    {
+                        SetTaskSettings();
+                        LoadTaskVisibility();
                         RefreshTasks();
                     } break;
             }
