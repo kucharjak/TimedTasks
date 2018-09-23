@@ -37,10 +37,10 @@ namespace TimedTasks
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Denní úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowDailyTasksCommand });
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Všechny úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowAllTasksCommand });
         }
-
-        private async void EditButton_Clicked(object sender, EventArgs e)
+        
+        private async void TaskCell_Tapped(object sender, EventArgs e)
         {
-            var item = ((sender as Button).BindingContext as TaskViewModel);
+            var item = ((sender as ViewCell).BindingContext as TaskViewModel);
             if (item == null)
                 return;
 
@@ -112,7 +112,7 @@ namespace TimedTasks
             if (listViewAnimationRunning)
                 return;
 
-#pragma warning disable  CS4014 
+#pragma warning disable CS4014
             listViewAnimationRunning = true;
             listView.FadeTo(0.2, listViewAnimationTime);
             await listView.TranslateTo(listView.Width, 0, listViewAnimationTime, Easing.SinIn);
