@@ -9,17 +9,42 @@ using Xamarin.Forms.Xaml;
 
 namespace TimedTasks.Pages
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class TaskCreatePage : ContentPage
-	{
-        public TaskViewModel NewTask { get; set; }
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class TaskDetailsPage : ContentPage
+    {
+        public TaskViewModel ResultTask = null;
 
-        public TaskCreatePage(DateTime taskDate)
+        public TaskDetailsPage(string title)
         {
             InitializeComponent();
 
+            Title = title;
+        }
+
+        public TaskDetailsPage(string title, DateTime startDate)
+        {
+            InitializeComponent();
+
+            Title = title;
             Resources["taskViewModel"] = new TaskViewModel();
-            TaskDate.Date = taskDate;
+            TaskDate.Date = startDate;
+        }
+
+        public TaskDetailsPage(string title, TaskViewModel taskViewModel)
+        {
+            InitializeComponent();
+
+            Title = title;
+            Resources["taskViewModel"] = taskViewModel.Copy(true);
+        }
+
+        private void ToolbarOK_Clicked(object sender, EventArgs e)
+        {
+            PrepareUserInput();
+            if (!ValidateUserInput())
+                return;
+
+            SaveUserInput();
         }
 
         protected void PrepareUserInput()
@@ -30,9 +55,9 @@ namespace TimedTasks.Pages
 
         protected bool ValidateUserInput()
         {
-            TaskStartTime.TextColor = Color.Default;
-            TaskEndTime.TextColor = Color.Default;
-            Summary.PlaceholderColor = Color.Default;
+            TaskStartTime.TextColor = Color.White;
+            TaskEndTime.TextColor = Color.White;
+            Summary.PlaceholderColor = Color.White;
 
             if (TaskStartTime.Time == TaskEndTime.Time || TaskStartTime.Time > TaskEndTime.Time)
             {
@@ -43,7 +68,7 @@ namespace TimedTasks.Pages
 
             if (String.IsNullOrEmpty(Summary.Text))
             {
-                Summary.Placeholder = "Napiš název úkolu";
+                Summary.Placeholder = "Doplň název úkolu";
                 Summary.PlaceholderColor = Color.Red;
                 return false;
             }
@@ -53,22 +78,8 @@ namespace TimedTasks.Pages
 
         protected virtual void SaveUserInput()
         {
-            NewTask = (Resources["taskViewModel"] as TaskViewModel);
-            Navigation.PopModalAsync();
-        }
-
-        protected virtual void SaveButton_Clicked(object sender, EventArgs e)
-        {
-            PrepareUserInput();
-            if (!ValidateUserInput())
-                return;
-
-            SaveUserInput();
-        }
-
-        protected virtual void CancelButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PopModalAsync();
+            ResultTask = (Resources["taskViewModel"] as TaskViewModel);
+            Navigation.PopAsync();
         }
 
         private void TaskEndTime_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -86,7 +97,7 @@ namespace TimedTasks.Pages
 
         private void TaskStartTime_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case nameof(TimePicker.Time):
                     {

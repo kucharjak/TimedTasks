@@ -10,6 +10,7 @@
             <Color x:Key="TaskColor">#1C3035</Color>
             <Color x:Key="HeaderTextColor">#FFFFFF</Color>
             <Color x:Key="TaskTextColor">#FFFFFF</Color>
+            <Color x:Key="DefaultColor">#FFFFFF</Color>
         </ResourceDictionary>
 	</Application.Resources>
 </Application>

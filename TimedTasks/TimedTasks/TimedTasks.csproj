@@ -12,18 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Pages\TaskCreatePage.xaml.cs">
-      <DependentUpon>TaskCreatePage.xaml</DependentUpon>
-    </Compile>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Pages\TaskCreatePage.xaml">
+    <EmbeddedResource Update="Pages\TaskDetailsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

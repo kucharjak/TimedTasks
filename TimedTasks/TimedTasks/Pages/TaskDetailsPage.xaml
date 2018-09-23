@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TimedTasks.ViewModels"
+             xmlns:converters="clr-namespace:TimedTasks.Converters"
+             x:Class="TimedTasks.Pages.TaskDetailsPage"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <viewModels:TaskViewModel x:Key="taskViewModel" />
+            <converters:StringLengthToNumberConverter x:Key="stringToInt" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ToolbarOK" Icon="baseline_done_white_36dp" Order="Primary" Clicked="ToolbarOK_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView BindingContext="{DynamicResource taskViewModel}">
+        <StackLayout Padding="10">
+            <Grid HorizontalOptions="FillAndExpand" RowSpacing="0" ColumnSpacing="0">
+                
+                <Label Text="Den" VerticalOptions="CenterAndExpand" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+                <Frame CornerRadius="8" Margin="2" Padding="5,0,5,0" BackgroundColor="{StaticResource TaskColor}" Grid.Column="1">
+                    <DatePicker x:Name="TaskDate" Date="{Binding DueDate}" TextColor="{StaticResource TaskTextColor}"
+                            VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  />
+                </Frame>
+
+                <Label Text="Začátek" VerticalOptions="CenterAndExpand" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" Grid.Row="1" />
+                <Frame CornerRadius="8" Margin="2" Padding="5,0,5,0" BackgroundColor="{StaticResource TaskColor}" Grid.Row="1" Grid.Column="1">
+                    <TimePicker x:Name="TaskStartTime" Time="{Binding StartTime}" TextColor="{StaticResource TaskTextColor}"
+                                VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                                PropertyChanged="TaskStartTime_PropertyChanged" />
+                </Frame>
+
+                <Label Text="Konec" VerticalOptions="CenterAndExpand" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" Grid.Row="2" />
+                <Frame CornerRadius="8" Margin="2" Padding="5,0,5,0" BackgroundColor="{StaticResource TaskColor}" Grid.Row="2" Grid.Column="1">
+                    <TimePicker x:Name="TaskEndTime" Time="{Binding EndTime}" TextColor="{StaticResource TaskTextColor}"
+                                VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                                PropertyChanged="TaskEndTime_PropertyChanged" />
+                </Frame>
+            </Grid>
+
+            <StackLayout Orientation="Horizontal" Spacing="0">
+                <Label Text="Shrnutí" HorizontalOptions="Start" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+                <Label Text="{Binding Text, Source={x:Reference Summary}, Converter={StaticResource stringToInt}}" HorizontalOptions="EndAndExpand" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+                <Label Text="{Binding MaxLength, Source={x:Reference Summary}, StringFormat='/{0}'}" HorizontalOptions="End" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+            </StackLayout>
+
+            <Frame CornerRadius="8" Padding="5,0,5,0" BackgroundColor="{StaticResource TaskColor}">
+                <Entry x:Name="Summary" Text="{Binding Summary}" Keyboard="Text" MaxLength="{Binding SummaryMaxChar}" TextColor="{StaticResource TaskTextColor}" />
+            </Frame>
+
+            <StackLayout Orientation="Horizontal" Spacing="0">
+                <Label Text="Popis úkolu" HorizontalOptions="Start" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+                <Label Text="{Binding Text, Source={x:Reference Description}, Converter={StaticResource stringToInt}}" HorizontalOptions="EndAndExpand" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+                <Label Text="{Binding MaxLength, Source={x:Reference Description}, StringFormat='/{0}'}" HorizontalOptions="End" FontSize="Medium" TextColor="{StaticResource TaskTextColor}" />
+            </StackLayout>
+            <Frame CornerRadius="8" Padding="5,0,5,0" BackgroundColor="{StaticResource TaskColor}" VerticalOptions="FillAndExpand" >
+                <Editor x:Name="Description" Text="{Binding Description}" Keyboard="Text" MaxLength="{Binding DescriptionMaxChar}" TextColor="{StaticResource TaskTextColor}" />
+            </Frame>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

@@ -56,9 +56,9 @@ namespace TimedTasks
             {
                 case "Upravit":
                     {
-                        var page = new TaskDetailsPage(item, dateSelector.Date);
+                        var page = new TaskDetailsPage("Upravit úkol", item);
                         page.Disappearing += TaskDetailsPage_Disapearing;
-                        await Navigation.PushModalAsync(page);
+                        await Navigation.PushAsync(page);
                     }
                     break;
                 case "Dokončit":
@@ -88,23 +88,23 @@ namespace TimedTasks
 
         private void AddButton_Clicked(object sender, EventArgs e)
         {
-            var page = new TaskCreatePage(dateSelector.Date);
+            var page = new TaskDetailsPage("Vytvořit úkol", dateSelector.Date);
             page.Disappearing += CreateTaskPage_Disappearing;
-            Navigation.PushModalAsync(page);
+            Navigation.PushAsync(page);
         }
 
         private void CreateTaskPage_Disappearing(object sender, EventArgs e)
         {
-            var page = (sender as TaskCreatePage);
-            if (page.NewTask != null)
-                tasks.AddNewTaskCommand.Execute(page.NewTask);
+            var page = (sender as TaskDetailsPage);
+            if (page.ResultTask != null)
+                tasks.AddNewTaskCommand.Execute(page.ResultTask);
         }
 
         private void TaskDetailsPage_Disapearing(object sender, EventArgs e)
         {
             var page = (sender as TaskDetailsPage);
-            if (page.NewTask != null)
-                tasks.UpdateTaskCommand.Execute(page.NewTask);
+            if (page.ResultTask != null)
+                tasks.UpdateTaskCommand.Execute(page.ResultTask);
         }
         
         private async void Button_DecreaseDay_Clicked(object sender, EventArgs e)

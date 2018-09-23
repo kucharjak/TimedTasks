@@ -16,7 +16,7 @@
             <converters:DateTimeToStringConverter x:Key="dateTimeToString" Format="dd.MM.yyyy" />
             <converters:SetValueIfTrueConverter x:Key="finishOrResumeTasks" TrueValue="Obnov" FalseValue="Dokonči" />
             <converters:SetValueIfTrueConverter x:Key="finishedColor" TrueValue="LightGreen" FalseValue="Transparent" />
-            <converters:SetValueIfTrueConverter x:Key="finishedOpacity" TrueValue="0.6" FalseValue="1" />
+            <converters:SetValueIfTrueConverter x:Key="finishedOpacity" TrueValue="0.3" FalseValue="1" />
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.ToolbarItems>
@@ -73,8 +73,9 @@
                     <BoxView BackgroundColor="Transparent" HeightRequest="90" />
                 </ListView.Footer>
             </ListView>
-            <Button x:Name="btnAddTask" 
-                    BackgroundColor="{StaticResource AccentColor}" Image="baseline_add_white_48dp"
+
+            <!--<Frame BackgroundColor="Black" Opacity="0.2" Padding="0" CornerRadius="30" WidthRequest="60" HeightRequest="60" Margin="10" VerticalOptions="End" HorizontalOptions="End" />-->
+            <Button x:Name="btnAddTask" BackgroundColor="{StaticResource AccentColor}" Image="baseline_add_white_48dp"
                     BorderRadius="30" WidthRequest="60" HeightRequest="60" Margin="15" VerticalOptions="End" HorizontalOptions="End" 
                     Clicked="AddButton_Clicked"/>
         </Grid>
