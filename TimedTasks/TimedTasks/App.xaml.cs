@@ -12,7 +12,7 @@ namespace TimedTasks
             InitializeComponent();
 
             Utils.AppData.LoadAppData();
-            
+
             MainPage = new NavigationPage(new MainPage());
         }
 

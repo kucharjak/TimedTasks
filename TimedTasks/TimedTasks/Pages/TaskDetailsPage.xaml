@@ -14,7 +14,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="ToolbarOK" Icon="baseline_done_white_36dp" Order="Primary" Clicked="ToolbarOK_Clicked" />
+        <ToolbarItem x:Name="ToolbarOK" Icon="baseline_done_white_48dp" Order="Primary" Clicked="ToolbarOK_Clicked" />
     </ContentPage.ToolbarItems>
 
     <ScrollView BindingContext="{DynamicResource taskViewModel}">

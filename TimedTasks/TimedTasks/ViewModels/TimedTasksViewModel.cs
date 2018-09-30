@@ -190,7 +190,11 @@ namespace TimedTasks.ViewModels
                 var groupName = ""; 
                 switch(options)
                 {
-                    case TaskSelectOptions.AllDaysByDate: { groupName = task.DueDate.ToString("D"); } break;
+                    case TaskSelectOptions.AllDaysByDate:
+                        {
+                            groupName = Utils.Strings.CapitalizeFirstLetter(Utils.Strings.DateTimeToString(task.DueDate, DateTime.Today, "D"));
+                        }
+                        break;
                 }
 
                 var group = (resultGroups.Where(grp  => (grp as TaskGroupViewModel).GroupName == groupName).FirstOrDefault() as TaskGroupViewModel);

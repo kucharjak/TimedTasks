@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TimedTasks.Pages.SettingsPage">
+    <ContentPage.Title>Nastavení</ContentPage.Title>
+
+    <StackLayout>
+        <Frame Margin="10" Padding="15" BorderColor="Transparent" CornerRadius="10" BackgroundColor="{StaticResource TaskColor}">
+            <Grid>
+                <StackLayout Orientation="Horizontal" Grid.Row="0">
+                    <Label Text="Používat délku úkolu" FontSize="Medium" TextColor="{StaticResource DefaultColor}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+                    <Switch HorizontalOptions="End" VerticalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" Grid.Row="1">
+                    <Label Text="Nastavit defaultní délku úkolu" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+                    <Switch x:Name="defaultLengthEnabled" HorizontalOptions="End" VerticalOptions="Center" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" BindingContext="{Reference defaultLengthEnabled}" Grid.Row="2">
+                    <Label Text="Defaultní délka úkolu" IsEnabled="{Binding IsToggled}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+                    <Entry Keyboard="Numeric" WidthRequest="150" IsEnabled="{Binding IsToggled}" HorizontalOptions="End" VerticalOptions="Center" />
+                </StackLayout>
+            </Grid>
+        </Frame>
+    </StackLayout>
+</ContentPage>

@@ -22,7 +22,7 @@ namespace TimedTasks
             dateSelector.Date = DateTime.Today;
 
             tasks = (Resources["timedTasksViewModel"] as TimedTasksViewModel);
-            
+
             ToolbarFinished.Command = tasks.ChangeFinishedVisibilityCommand;
 
             ToolbarFinished.BindingContext = tasks;
@@ -36,6 +36,7 @@ namespace TimedTasks
             this.SetBinding(ContentPage.TitleProperty, "Title");
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Denní úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowDailyTasksCommand });
             this.ToolbarItems.Add(new ToolbarItem() { Text = "Všechny úkoly", Order = ToolbarItemOrder.Secondary, Command = tasks.ShowAllTasksCommand });
+            //this.ToolbarItems.Add(new ToolbarItem() { Text = "Nastavení", Order = ToolbarItemOrder.Secondary, Command = new Command(async() => { await Navigation.PushAsync(new SettingsPage()); }) });
         }
         
         private async void TaskCell_Tapped(object sender, EventArgs e)
